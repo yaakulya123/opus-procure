@@ -12,6 +12,8 @@ import lombok.Setter;
 public class FormRequest {
     private String materialName;
     private String sector;
-    private Integer budget;
+    private Integer budgetMin;
+    private Integer budgetMax;
     private String country;
+    private String aiPrompt;
 }
