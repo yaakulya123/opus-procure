@@ -1,103 +1,240 @@
 # OpusProcure
 
-AI-powered procurement platform that finds, compares, and ranks vendors for your material needs. Built as a SaaS product for corporate procurement teams.
+**AI-powered procurement, simplified.**
 
-## Overview
+OpusProcure replaces weeks of manual vendor sourcing with a single intelligent workflow. Submit your material requirements, and our AI agents search globally to find, rank, and compare vendors — then draft personalized outreach emails so your team can close deals faster.
 
-OpusProcure automates the vendor sourcing process. Users submit material requirements and the platform's AI agents search globally, returning ranked vendor options with pricing, compliance data, delivery estimates, and match scores. The entire flow from request to vendor outreach is handled in one interface.
+> Built for the Opus Hackathon 2026
 
-## Application Flow
+---
 
-1. **Request** (`/request`) -- Users describe their material needs, sector, budget, and preferred regions. An optional AI guidance field lets users influence search priorities.
-2. **Dashboard** (`/dashboard`) -- Displays AI-sourced vendor results in a sortable, searchable table. Includes stat cards (total vendors, average price, best match, estimated savings), an AI recommendation banner, and interactive charts (bar chart for price comparison, radar chart for multi-axis top-3 analysis). Clicking a vendor opens a detail sidebar with compliance, shipping, and pricing breakdown.
-3. **Confirmation** (`/confirm`) -- Shows the selected vendor's order summary, a horizontal procurement timeline, and an editable AI-generated outreach email ready to send.
+## The Problem
+
+Corporate procurement teams spend **days to weeks** manually searching for suppliers, comparing quotes, verifying compliance, and drafting outreach. The process is fragmented across spreadsheets, emails, and search engines — with no centralized intelligence.
+
+## Our Solution
+
+OpusProcure is an end-to-end AI procurement platform that automates the entire vendor discovery pipeline:
+
+1. **Describe** what you need (sector, equipment, budget, region, compliance)
+2. **Discover** — AI agents search globally and return ranked vendor matches
+3. **Compare** vendors side-by-side with ratings, compliance data, and descriptions
+4. **Contact** — AI drafts a professional outreach email, ready to send in one click
+
+The entire flow takes **under 2 minutes** instead of days.
+
+---
+
+## How It Works
+
+```
+User submits form  →  Opus AI agents search  →  Ranked vendors returned  →  AI drafts email  →  Send
+```
+
+### Architecture
+
+```
+┌─────────────────────────────────────────────────────┐
+│                   Next.js Frontend                   │
+│         (React + TypeScript + Tailwind CSS)          │
+├──────────────────────┬──────────────────────────────┤
+│                      │                              │
+│    /request          │    /dashboard    /confirm    │
+│    Form input        │    Results       Email       │
+│                      │    Compare       Outreach    │
+└──────────────────────┴──────────┬───────────────────┘
+                                  │ REST API
+                       ┌──────────▼───────────────────┐
+                       │     Spring Boot Backend       │
+                       │     (Java + REST API)         │
+                       ├──────────────────────────────┤
+                       │   POST /api/form-request      │
+                       │   POST /api/write-email       │
+                       └──────────┬───────────────────┘
+                                  │ Opus API
+                       ┌──────────▼───────────────────┐
+                       │   Opus AI Agent Platform      │
+                       │                              │
+                       │  1. POST /job/initiate        │
+                       │  2. POST /job/execute         │
+                       │  3. GET  /job/{id}/results    │
+                       └──────────────────────────────┘
+```
+
+### Opus API Integration
+
+The backend orchestrates **3 Opus API calls** per workflow:
+
+| Step | Endpoint | Purpose |
+|------|----------|---------|
+| 1 | `POST /job/initiate` | Create a new AI agent job for the workflow |
+| 2 | `POST /job/execute` | Send the user's form data as the job payload |
+| 3 | `GET /job/{id}/results` | Retrieve AI-generated vendor results |
+
+**Two workflows are powered by Opus:**
+- **Vendor Search** — Takes sector, equipment type, budget, countries, and compliance requirements. Returns matched vendors with product names, ratings, descriptions, and compliance details.
+- **Email Generation** — Takes recipient info, instructions, and template structure. Generates and sends professional outreach emails.
+
+---
+
+## Application Walkthrough
+
+### 1. Landing Page (`/`)
+Clean hero with feature highlights and dual CTAs. Sets the tone for a modern SaaS experience.
+
+### 2. Procurement Request (`/request`)
+Two-column layout with a structured form (sector, equipment type, budget, priority countries, compliance) and a contextual sidebar showing how it works. A live progress indicator fills as fields are completed. Submit triggers the AI agent pipeline.
+
+### 3. Vendor Dashboard (`/dashboard`)
+The core of the platform:
+- **Stats row** — Total vendors found, average rating, top match
+- **Searchable vendor table** — Company name, product, ratings, compliance at a glance
+- **Detail sidebar** — Click any vendor to see full description, ratings, and compliance details
+- **AI recommendation banner** — Highlights the best-fit vendor with confidence score and reasoning
+
+### 4. Confirmation & Outreach (`/confirm`)
+- **Horizontal timeline** tracking the procurement journey (5 stages)
+- **Vendor summary card** with all key details
+- **Editable AI-generated email** — Review, customize, and send with a single click
+- **3-state send button** with loading animation (idle → sending → sent)
+
+---
 
 ## Tech Stack
 
-- **Framework:** Next.js 14.2 (App Router)
-- **Language:** TypeScript (strict mode)
-- **Styling:** Tailwind CSS v3.4
-- **Charts:** Recharts 3.7
-- **Icons:** Lucide React
+| Layer | Technology |
+|-------|-----------|
+| **Frontend** | Next.js 14 (App Router), TypeScript, Tailwind CSS |
+| **Backend** | Spring Boot (Java), REST API |
+| **AI Platform** | Opus AI Agents |
+| **Icons** | Lucide React |
+| **State** | React hooks + localStorage |
 
-## Getting Started
-
-```bash
-# Install dependencies
-npm install
-
-# Start development server
-npm run dev
-
-# Build for production
-npm run build
-```
-
-The app runs at `http://localhost:3000`.
+---
 
 ## Project Structure
 
 ```
 src/
-├── app/
-│   ├── page.tsx              # Landing page
-│   ├── request/page.tsx      # Procurement request form
-│   ├── dashboard/page.tsx    # Vendor results with charts
-│   └── confirm/page.tsx      # Order confirmation and email
+├── app/                          # Next.js pages (App Router)
+│   ├── page.tsx                  # Landing page
+│   ├── request/page.tsx          # Procurement form
+│   ├── dashboard/page.tsx        # Vendor results & comparison
+│   └── confirm/page.tsx          # Order confirmation & email
 ├── components/
-│   ├── layout/               # TopNav, Sidebar, Header
-│   ├── request/              # MaterialForm, MaterialTable, PromptInput
-│   ├── dashboard/            # VendorCard, FilterBar, ComparisonChart, AIRecommendation
-│   ├── confirm/              # OrderSummary, EmailPreview, Timeline
-│   └── common/               # HeroImage
-└── lib/
-    ├── types.ts              # TypeScript interfaces and constants
-    ├── mockData.ts           # Demo dataset (8 vendors, stats, timeline)
-    └── api.ts                # API client (mocked, ready for backend integration)
+│   ├── layout/TopNav.tsx         # Shared navigation bar
+│   ├── dashboard/                # VendorCard, AIRecommendation, ComparisonChart
+│   ├── confirm/                  # OrderSummary, EmailPreview, Timeline
+│   └── request/                  # MaterialForm
+├── lib/
+│   ├── types.ts                  # TypeScript interfaces
+│   ├── mockData.ts               # Demo dataset (8 vendors)
+│   └── api.ts                    # API client (mock + real endpoints)
+└── main/java/com/example/demo/
+    ├── controller/
+    │   └── ProcurementController.java   # REST endpoints
+    ├── service/
+    │   └── OpusService.java             # Opus API orchestration
+    └── dto/                             # Request/response DTOs
+        ├── FormRequest.java
+        ├── EmailRequest.java
+        ├── SearchResponse.java
+        ├── JobInitiateRequest.java
+        ├── JobExecuteRequest.java
+        └── JobResultsResponse.java
 ```
 
-## Backend Integration
+---
 
-All API calls are currently mocked with simulated delays. The frontend is ready for backend integration at three endpoints:
+## Getting Started
 
-| Endpoint | Method | Purpose |
-|---|---|---|
-| `/api/opus/trigger` | POST | Submit procurement request, trigger AI agent search |
-| `/api/opus/results` | GET | Retrieve vendor list, stats, and AI recommendation |
-| `/api/opus/email` | POST | Send outreach email to selected vendor |
+### Prerequisites
+- Node.js 18+
+- Java 17+ (for backend)
+- npm
 
-API functions are in `src/lib/api.ts`. Uncomment `API_BASE` and replace the mock implementations with real fetch calls.
+### Frontend
 
-### Expected Request/Response Types
+```bash
+npm install
+npm run dev
+```
 
-All TypeScript interfaces are defined in `src/lib/types.ts`:
+Open [http://localhost:3000](http://localhost:3000) — the frontend runs with mock data out of the box, no backend required.
 
-- **ProcurementRequest** -- materials array, AI prompt, budget (min/max/total/currency), region
-- **Vendor** -- 14 fields including price, priceComparison, compliance array, matchScore, rating, shippingDays
-- **DashboardStats** -- totalVendors, avgPrice, bestMatchScore, estimatedSavings
-- **AIRecommendation** -- vendorId, reasoning string, confidenceScore
+### Backend
+
+```bash
+# Set environment variables
+export OPUS_BASE_URL=https://operator.opus.com
+export SECRET_KEY_OPUS=your-opus-service-key
+export PROCESS_SEARCH_ID=your-search-workflow-id
+export PROCESS_EMAIL_ID=your-email-workflow-id
+
+# Run Spring Boot
+./mvnw spring-boot:run
+```
 
 ### Environment Variables
 
-When the backend is ready, create `.env.local`:
+| Variable | Description |
+|----------|-------------|
+| `NEXT_PUBLIC_API_BASE_URL` | Backend URL (frontend `.env.local`) |
+| `opus.base-url` | Opus API base URL |
+| `secret_key_opus` | Opus service authentication key |
+| `process_search_id` | Opus workflow ID for vendor search |
+| `process_email_id` | Opus workflow ID for email generation |
 
+---
+
+## API Reference
+
+### Frontend → Backend
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/form-request` | POST | Submit procurement form, returns vendor results |
+| `/api/write-email` | POST | Generate and send outreach email |
+
+### Backend → Opus
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/job/initiate` | POST | Start a new AI agent job |
+| `/job/execute` | POST | Execute job with payload variables |
+| `/job/{id}/results` | GET | Retrieve AI-generated results |
+
+### Vendor Data Schema
+
+```json
+{
+  "company_product_name": "TechSource Global — Premium Copper Wire AWG 12",
+  "match_name": "TechSource Global",
+  "ratings": "4.8/5",
+  "company_description": "Leading East Asian electronics supplier...",
+  "compliance_details": "ISO 9001, CE, UL — Full compliance..."
+}
 ```
-NEXT_PUBLIC_API_BASE_URL=https://your-api-domain.com
-```
 
-## Design
+---
 
-Minimalist, white-background interface inspired by Linear and Attio. Key patterns:
+## Design Philosophy
 
-- System font stack, 8px spacing scale
-- Gray-900 primary actions, emerald for positive indicators, amber for warnings
-- Rounded-xl cards with light borders, no heavy shadows
-- Desktop-first layout, top navigation bar
+Minimalist SaaS aesthetic inspired by **Linear**, **Notion**, and **Attio**:
 
-## Image Sources
+- **Whitespace-first** — Generous spacing, clean card layouts
+- **Minimal color palette** — White/gray base, emerald for positive indicators, amber for ratings
+- **Data-rich interfaces** — Stats cards, searchable tables, detail sidebars
+- **Progressive disclosure** — Information reveals as users interact
+- **4-step linear flow** — Request → Search → Compare → Contact
 
-- Product images: [Unsplash](https://unsplash.com) (configured in `next.config.mjs`)
-- Vendor logos: [UI Avatars API](https://ui-avatars.com) (dynamic generation from company name)
+---
+
+## Team
+
+Built during the **Opus Hackathon 2026**.
+
+---
 
 ## License
 

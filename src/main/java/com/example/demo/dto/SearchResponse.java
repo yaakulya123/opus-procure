@@ -13,31 +13,21 @@ import java.util.List;
 @AllArgsConstructor
 public class SearchResponse {
 
-    /** Ranked list of the top x most relevant vendors with full details. */
+    /** Vendor results from AI search. */
     private List<VendorEntry> topVendorList;
+
+    /** Summary from the Opus API results. */
+    private String summary;
 
     @Getter
     @Setter
     @NoArgsConstructor
     @AllArgsConstructor
     public static class VendorEntry {
-        private String vendorId;
-        private String vendorName;
-        private Double complianceScore;
-        private Double budgetFitScore;
-        private Double overallScore;
-        private List<String> complianceCertifications;
-        private Integer proposedBudget;
-        private String location;
-        private OtherDetails otherDetails;
-    }
-
-    @Getter
-    @Setter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class OtherDetails {
-        private Integer yearsInBusiness;
-        private String industry;
+        private String companyProductName;
+        private String matchName;
+        private String ratings;
+        private String companyDescription;
+        private String complianceDetails;
     }
 }

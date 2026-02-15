@@ -11,10 +11,9 @@ import {
   Circle,
   ArrowRight,
   Mail,
-  Star,
-  Truck,
   Shield,
   Send,
+  Star,
 } from "lucide-react";
 
 export default function ConfirmPage() {
@@ -56,7 +55,7 @@ export default function ConfirmPage() {
               Vendor selected
             </h1>
             <p className="text-gray-500 text-sm">
-              Review your order and send outreach to {vendor.companyName}
+              Review your order and send outreach to {vendor.matchName || "the vendor"}
             </p>
           </div>
 
@@ -118,56 +117,42 @@ export default function ConfirmPage() {
                 </h2>
                 <div className="flex items-center gap-3 mb-5">
                   <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center text-sm font-semibold">
-                    {vendor.companyName.charAt(0)}
+                    {(vendor.matchName || "?").charAt(0)}
                   </div>
                   <div>
-                    <p className="font-semibold">{vendor.companyName}</p>
-                    <p className="text-xs text-gray-500">{vendor.region}</p>
+                    <p className="font-semibold">{vendor.matchName || "Unknown"}</p>
+                    {vendor.ratings && (
+                      <div className="flex items-center gap-1 text-xs text-gray-500">
+                        <Star className="w-3 h-3 text-amber-400 fill-amber-400" />
+                        {vendor.ratings}
+                      </div>
+                    )}
                   </div>
                 </div>
-                <p className="text-sm text-gray-600 mb-4">
-                  {vendor.productName}
-                </p>
 
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between py-2 border-t border-gray-100">
-                    <span className="text-sm text-gray-500">Unit price</span>
-                    <span className="text-sm font-semibold">
-                      ${vendor.price.toLocaleString()}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between py-2 border-t border-gray-100">
-                    <span className="text-sm text-gray-500">Shipping</span>
-                    <span className="text-sm font-medium">
-                      ${vendor.deliveryCost}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between py-2 border-t border-gray-100">
-                    <span className="text-sm font-semibold">Total</span>
-                    <span className="text-sm font-semibold">
-                      ${(vendor.price + vendor.deliveryCost).toLocaleString()}
-                    </span>
-                  </div>
-                </div>
-              </div>
+                {vendor.companyProductName && (
+                  <p className="text-sm text-gray-600 font-medium mb-3">
+                    {vendor.companyProductName}
+                  </p>
+                )}
 
-              {/* Quick stats */}
-              <div className="grid grid-cols-3 gap-3">
-                <div className="bg-white border border-gray-200 rounded-xl p-4 text-center">
-                  <Star className="w-4 h-4 text-amber-400 fill-amber-400 mx-auto mb-1" />
-                  <p className="text-lg font-semibold">{vendor.rating}</p>
-                  <p className="text-xs text-gray-500">Rating</p>
-                </div>
-                <div className="bg-white border border-gray-200 rounded-xl p-4 text-center">
-                  <Truck className="w-4 h-4 text-gray-400 mx-auto mb-1" />
-                  <p className="text-lg font-semibold">{vendor.shippingDays}d</p>
-                  <p className="text-xs text-gray-500">Delivery</p>
-                </div>
-                <div className="bg-white border border-gray-200 rounded-xl p-4 text-center">
-                  <Shield className="w-4 h-4 text-emerald-500 mx-auto mb-1" />
-                  <p className="text-lg font-semibold">{vendor.compliance.length}</p>
-                  <p className="text-xs text-gray-500">Certs</p>
-                </div>
+                {vendor.companyDescription && (
+                  <p className="text-sm text-gray-500 leading-relaxed mb-4">
+                    {vendor.companyDescription}
+                  </p>
+                )}
+
+                {vendor.complianceDetails && (
+                  <div className="border-t border-gray-100 pt-4">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Shield className="w-3.5 h-3.5 text-emerald-500" />
+                      <span className="text-xs font-medium text-gray-500 uppercase">Compliance</span>
+                    </div>
+                    <p className="text-sm text-gray-600">
+                      {vendor.complianceDetails}
+                    </p>
+                  </div>
+                )}
               </div>
 
               {/* Actions */}
@@ -197,7 +182,7 @@ export default function ConfirmPage() {
                     <h2 className="text-sm font-medium">Vendor outreach email</h2>
                   </div>
                   <span className="text-xs text-gray-500">
-                    To: {vendor.companyName}
+                    To: {vendor.matchName || "Vendor"}
                   </span>
                 </div>
                 <div className="p-6">

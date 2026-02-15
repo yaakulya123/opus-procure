@@ -7,47 +7,76 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.Map;
 
-/** Response from GET /job/{jobExecutionId}/results. */
+/**
+ * Response from GET /job/{jobExecutionId}/results.
+ *
+ * Actual shape:
+ * {
+ *   "jobExecutionId": "...",
+ *   "status": "COMPLETED",
+ *   "results": {
+ *     "summary": "...",
+ *     "outputFiles": ["..."],
+ *     "data": {
+ *       "company_product_name": "...",
+ *       "match_name": "...",
+ *       "ratings": "...",
+ *       "company_description": "...",
+ *       "compliance_details": "..."
+ *     }
+ *   }
+ * }
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class JobResultsResponse {
 
-    @JsonProperty("data")
-    private List<VendorResultItem> data;
+    @JsonProperty("jobExecutionId")
+    private String jobExecutionId;
+
+    @JsonProperty("status")
+    private String status;
+
+    @JsonProperty("results")
+    private Results results;
 
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public static class VendorResultItem {
-        @JsonProperty("vendor_name")
-        private String vendorName;
+    public static class Results {
+        @JsonProperty("summary")
+        private String summary;
 
-        @JsonProperty("compliance_score")
-        private Double complianceScore;
+        @JsonProperty("outputFiles")
+        private List<String> outputFiles;
 
-        @JsonProperty("budget_fit_score")
-        private Double budgetFitScore;
+        @JsonProperty("data")
+        private ResultData data;
+    }
 
-        @JsonProperty("overall_score")
-        private Double overallScore;
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class ResultData {
+        @JsonProperty("company_product_name")
+        private String companyProductName;
 
-        @JsonProperty("compliance_certifications")
-        private List<String> complianceCertifications;
+        @JsonProperty("match_name")
+        private String matchName;
 
-        @JsonProperty("proposed_budget")
-        private Integer proposedBudget;
+        @JsonProperty("ratings")
+        private String ratings;
 
-        @JsonProperty("location")
-        private String location;
+        @JsonProperty("company_description")
+        private String companyDescription;
 
-        @JsonProperty("years_in_business")
-        private Integer yearsInBusiness;
-
-        @JsonProperty("industry")
-        private String industry;
+        @JsonProperty("compliance_details")
+        private String complianceDetails;
     }
 }

@@ -20,7 +20,7 @@ export default function AIRecommendation({
         <div className="flex-1">
           <div className="flex items-center gap-3 mb-3">
             <div className="w-8 h-8 rounded-xl bg-white/10 backdrop-blur-sm flex items-center justify-center">
-              <Sparkles className="w-4.5 h-4.5" />
+              <Sparkles className="w-4 h-4" />
             </div>
             <h3 className="text-sm font-bold uppercase tracking-wide">
               AI Recommendation
@@ -29,7 +29,7 @@ export default function AIRecommendation({
               {recommendation.confidenceScore}% confidence
             </span>
           </div>
-          <p className="text-xl font-bold mb-2">{vendor.companyName}</p>
+          <p className="text-xl font-bold mb-2">{vendor.matchName || "Unknown"}</p>
           <p className="text-sm text-blue-50 leading-relaxed max-w-3xl opacity-90">
             {recommendation.reasoning}
           </p>

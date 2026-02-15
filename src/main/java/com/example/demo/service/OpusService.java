@@ -7,8 +7,10 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -150,7 +152,11 @@ public class OpusService {
 
     /**
      * GET https://operator.opus.com/job/{jobExecutionId}/results
-     * Returns vendor list in SearchResponse format (data field: vendor_name, compliance_score, budget_fit_score, overall_score, compliance_certifications, proposed_budget, location, years_in_business, industry).
+     *
+     * Response shape:
+     * { jobExecutionId, status, results: { summary, outputFiles, data: {
+     *     company_product_name, match_name, ratings, company_description, compliance_details
+     * }}}
      */
     private SearchResponse fetchJobResults(String jobExecutionId) {
         String url = baseUrl + String.format(RESULTS_PATH_TEMPLATE, jobExecutionId);
@@ -165,28 +171,24 @@ public class OpusService {
         );
 
         JobResultsResponse body = response.getBody();
-        if (body == null || body.getData() == null) {
-            return new SearchResponse(Collections.emptyList());
+        if (body == null || body.getResults() == null || body.getResults().getData() == null) {
+            return new SearchResponse(Collections.emptyList(), null);
         }
-        return new SearchResponse(body.getData().stream()
-                .map(this::toVendorEntry)
-                .toList());
-    }
 
-    private SearchResponse.VendorEntry toVendorEntry(JobResultsResponse.VendorResultItem item) {
-        SearchResponse.OtherDetails other = item.getYearsInBusiness() != null || item.getIndustry() != null
-                ? new SearchResponse.OtherDetails(item.getYearsInBusiness(), item.getIndustry())
-                : null;
-        return new SearchResponse.VendorEntry(
-                null,
-                item.getVendorName(),
-                item.getComplianceScore(),
-                item.getBudgetFitScore(),
-                item.getOverallScore(),
-                item.getComplianceCertifications(),
-                item.getProposedBudget(),
-                item.getLocation(),
-                other
+        JobResultsResponse.ResultData data = body.getResults().getData();
+        String summary = body.getResults().getSummary();
+
+        SearchResponse.VendorEntry entry = new SearchResponse.VendorEntry(
+                data.getCompanyProductName(),
+                data.getMatchName(),
+                data.getRatings(),
+                data.getCompanyDescription(),
+                data.getComplianceDetails()
         );
+
+        List<SearchResponse.VendorEntry> vendors = new ArrayList<>();
+        vendors.add(entry);
+
+        return new SearchResponse(vendors, summary);
     }
 }

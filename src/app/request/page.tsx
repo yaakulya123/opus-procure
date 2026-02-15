@@ -4,25 +4,23 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import TopNav from "@/components/layout/TopNav";
 import {
-  Sparkles,
+  Shield,
   Package,
   Factory,
   DollarSign,
   Globe,
   ArrowRight,
   Clock,
-  Shield,
   BarChart3,
 } from "lucide-react";
 
 export default function RequestPage() {
   const router = useRouter();
-  const [material, setMaterial] = useState("");
   const [sector, setSector] = useState("");
-  const [budgetMin, setBudgetMin] = useState("");
-  const [budgetMax, setBudgetMax] = useState("");
-  const [countries, setCountries] = useState("");
-  const [aiPrompt, setAiPrompt] = useState("");
+  const [equipmentType, setEquipmentType] = useState("");
+  const [budgetRequirements, setBudgetRequirements] = useState("");
+  const [priorityCountries, setPriorityCountries] = useState("");
+  const [compliance, setCompliance] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -32,7 +30,7 @@ export default function RequestPage() {
     router.push("/dashboard");
   };
 
-  const filledFields = [material, sector, budgetMin || budgetMax, countries].filter(Boolean).length;
+  const filledFields = [sector, equipmentType, budgetRequirements, priorityCountries].filter(Boolean).length;
 
   return (
     <>
@@ -66,7 +64,7 @@ export default function RequestPage() {
                     1
                   </div>
                   <span className={filledFields >= 1 ? "text-gray-900 font-medium" : "text-gray-400"}>
-                    Materials
+                    Sector
                   </span>
                 </div>
                 <div className="w-8 h-px bg-gray-200" />
@@ -81,7 +79,7 @@ export default function RequestPage() {
                     2
                   </div>
                   <span className={filledFields >= 2 ? "text-gray-900 font-medium" : "text-gray-400"}>
-                    Details
+                    Equipment
                   </span>
                 </div>
                 <div className="w-8 h-px bg-gray-200" />
@@ -118,22 +116,6 @@ export default function RequestPage() {
 
               {/* Form */}
               <form onSubmit={handleSubmit} className="space-y-6">
-                {/* Material */}
-                <div>
-                  <label className="flex items-center gap-2 text-sm font-medium mb-2.5">
-                    <Package className="w-4 h-4 text-gray-400" />
-                    Inbound material
-                  </label>
-                  <input
-                    type="text"
-                    value={material}
-                    onChange={(e) => setMaterial(e.target.value)}
-                    placeholder="e.g., Copper wire, Steel fasteners, Shipping boxes"
-                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent focus:bg-white transition-all text-sm"
-                    required
-                  />
-                </div>
-
                 {/* Sector */}
                 <div>
                   <label className="flex items-center gap-2 text-sm font-medium mb-2.5">
@@ -150,63 +132,67 @@ export default function RequestPage() {
                   />
                 </div>
 
-                {/* Budget */}
+                {/* Equipment Type */}
                 <div>
                   <label className="flex items-center gap-2 text-sm font-medium mb-2.5">
-                    <DollarSign className="w-4 h-4 text-gray-400" />
-                    Budget range (USD)
-                  </label>
-                  <div className="grid grid-cols-2 gap-3">
-                    <input
-                      type="number"
-                      value={budgetMin}
-                      onChange={(e) => setBudgetMin(e.target.value)}
-                      placeholder="Min (e.g., 5000)"
-                      min="0"
-                      className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent focus:bg-white transition-all text-sm"
-                      required
-                    />
-                    <input
-                      type="number"
-                      value={budgetMax}
-                      onChange={(e) => setBudgetMax(e.target.value)}
-                      placeholder="Max (e.g., 10000)"
-                      min="0"
-                      className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent focus:bg-white transition-all text-sm"
-                      required
-                    />
-                  </div>
-                </div>
-
-                {/* Countries */}
-                <div>
-                  <label className="flex items-center gap-2 text-sm font-medium mb-2.5">
-                    <Globe className="w-4 h-4 text-gray-400" />
-                    Preferred regions
+                    <Package className="w-4 h-4 text-gray-400" />
+                    Equipment type
                   </label>
                   <input
                     type="text"
-                    value={countries}
-                    onChange={(e) => setCountries(e.target.value)}
-                    placeholder="e.g., North America, Europe, East Asia"
+                    value={equipmentType}
+                    onChange={(e) => setEquipmentType(e.target.value)}
+                    placeholder="e.g., Copper wire, Steel fasteners, Industrial motors"
                     className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent focus:bg-white transition-all text-sm"
                     required
                   />
                 </div>
 
-                {/* AI Prompt */}
+                {/* Budget Requirements */}
                 <div>
                   <label className="flex items-center gap-2 text-sm font-medium mb-2.5">
-                    <Sparkles className="w-4 h-4 text-gray-400" />
-                    AI guidance
+                    <DollarSign className="w-4 h-4 text-gray-400" />
+                    Budget requirements
+                  </label>
+                  <input
+                    type="text"
+                    value={budgetRequirements}
+                    onChange={(e) => setBudgetRequirements(e.target.value)}
+                    placeholder="e.g., $5,000 - $10,000 USD, under $50k"
+                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent focus:bg-white transition-all text-sm"
+                    required
+                  />
+                </div>
+
+                {/* Priority Countries */}
+                <div>
+                  <label className="flex items-center gap-2 text-sm font-medium mb-2.5">
+                    <Globe className="w-4 h-4 text-gray-400" />
+                    Priority countries
+                  </label>
+                  <input
+                    type="text"
+                    value={priorityCountries}
+                    onChange={(e) => setPriorityCountries(e.target.value)}
+                    placeholder="e.g., USA, Germany, Japan, China"
+                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent focus:bg-white transition-all text-sm"
+                    required
+                  />
+                </div>
+
+                {/* Compliance */}
+                <div>
+                  <label className="flex items-center gap-2 text-sm font-medium mb-2.5">
+                    <Shield className="w-4 h-4 text-gray-400" />
+                    Compliance requirements
                     <span className="text-gray-400 font-normal">(optional)</span>
                   </label>
-                  <textarea
-                    value={aiPrompt}
-                    onChange={(e) => setAiPrompt(e.target.value)}
-                    placeholder="e.g., Prioritize eco-friendly suppliers with fast delivery"
-                    rows={3}
-                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent focus:bg-white transition-all text-sm resize-none"
+                  <input
+                    type="text"
+                    value={compliance}
+                    onChange={(e) => setCompliance(e.target.value)}
+                    placeholder="e.g., ISO 9001, CE, UL, RoHS"
+                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent focus:bg-white transition-all text-sm"
                   />
                 </div>
 
@@ -245,7 +231,7 @@ export default function RequestPage() {
                       <div>
                         <p className="text-sm font-medium">Submit request</p>
                         <p className="text-xs text-gray-500 mt-0.5">
-                          Describe your material needs and preferences
+                          Describe your procurement needs and preferences
                         </p>
                       </div>
                     </div>
@@ -267,7 +253,7 @@ export default function RequestPage() {
                       <div>
                         <p className="text-sm font-medium">Compare & select</p>
                         <p className="text-xs text-gray-500 mt-0.5">
-                          Review pricing, compliance, and delivery data
+                          Review scores, compliance, and budget data
                         </p>
                       </div>
                     </div>

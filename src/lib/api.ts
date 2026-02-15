@@ -9,24 +9,43 @@ const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 /**
  * Form request payload — matches backend FormRequest.java
+ * Backend: POST /api/form-request
  */
 export interface FormRequestPayload {
-  materialName: string;
   sector: string;
-  budgetMin: number;
-  budgetMax: number;
-  country: string;
-  aiPrompt: string;
+  equipmentType: string;
+  priorityCountries: string;
+  budgetRequirements: string;
+  compliance: string;
+}
+
+/**
+ * Email request payload — matches backend EmailRequest.java
+ * Backend: POST /api/write-email
+ */
+export interface EmailRequestPayload {
+  recipientEmailAddressList: string;
+  instructions: string;
+  pastTemplateStructure: string;
+}
+
+/**
+ * Search response — matches backend SearchResponse.java
+ * Backend returns: { topVendorList: VendorEntry[], summary: string }
+ * Each VendorEntry: { companyProductName, matchName, ratings, companyDescription, complianceDetails }
+ */
+export interface SearchResponsePayload {
+  topVendorList: Vendor[];
+  summary: string | null;
 }
 
 /**
  * Submit procurement form to backend
- * Backend: POST /api/form-request
- * Sends form data → backend calls Opus API → parses results → saves to DB → returns vendors
+ * Backend: POST /api/form-request → returns SearchResponse
  */
 export async function submitFormRequest(
   request: FormRequestPayload
-): Promise<{ jobId: string }> {
+): Promise<SearchResponsePayload> {
   // When backend is ready:
   // const res = await fetch(`${API_BASE}/api/form-request`, {
   //   method: "POST",
@@ -37,23 +56,17 @@ export async function submitFormRequest(
 
   await delay(1500);
   console.log("Submitting form request:", request);
-  return { jobId: "job_" + Date.now() };
+  return { topVendorList: mockVendors, summary: null };
 }
 
 /**
- * Fetch vendor results from backend
- * Backend: GET /api
- * Returns vendor list, stats, and AI recommendation
+ * Fetch vendor results (mock — for demo purposes)
  */
 export async function fetchVendorResults(): Promise<{
   vendors: Vendor[];
   stats: DashboardStats;
   recommendation: AIRecommendation;
 }> {
-  // When backend is ready:
-  // const res = await fetch(`${API_BASE}/api`);
-  // return res.json();
-
   await delay(800);
   return {
     vendors: mockVendors,
@@ -64,24 +77,22 @@ export async function fetchVendorResults(): Promise<{
 
 /**
  * Send outreach email to vendor
- * Backend: POST /api/write-email
- * Sends email request → backend calls Opus API → updates vendor status
+ * Backend: POST /api/write-email → accepts EmailRequest
  */
 export async function sendVendorEmail(
-  vendorId: string,
-  emailContent: string
-): Promise<{ success: boolean; messageId: string }> {
+  payload: EmailRequestPayload
+): Promise<{ success: boolean }> {
   // When backend is ready:
   // const res = await fetch(`${API_BASE}/api/write-email`, {
   //   method: "POST",
   //   headers: { "Content-Type": "application/json" },
-  //   body: JSON.stringify({ vendorId, emailContent }),
+  //   body: JSON.stringify(payload),
   // });
   // return res.json();
 
   await delay(1000);
-  console.log("Sending email to vendor:", vendorId, emailContent);
-  return { success: true, messageId: "msg_" + Date.now() };
+  console.log("Sending email:", payload);
+  return { success: true };
 }
 
 export function getDefaultEmailDraft(): string {

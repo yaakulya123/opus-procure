@@ -1,167 +1,56 @@
 "use client";
 
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  RadarChart,
-  PolarGrid,
-  PolarAngleAxis,
-  PolarRadiusAxis,
-  Radar,
-  Legend,
-} from "recharts";
 import { Vendor } from "@/lib/types";
-import { useState } from "react";
+import { Star, Shield } from "lucide-react";
 
 interface ComparisonChartProps {
   vendors: Vendor[];
 }
 
+// Simplified comparison view since vendor data is now string-based (no numeric scores).
 export default function ComparisonChart({ vendors }: ComparisonChartProps) {
-  const [chartType, setChartType] = useState<"bar" | "radar">("bar");
-
   const top5 = vendors.slice(0, 5);
-
-  const barData = top5.map((v) => ({
-    name: v.companyName.split(" ").slice(0, 2).join(" "),
-    Price: v.price,
-    "Delivery (days)": v.shippingDays * 100,
-    "Match Score": v.matchScore * 50,
-  }));
-
-  const radarData = [
-    {
-      metric: "Price",
-      ...Object.fromEntries(
-        top5.map((v) => [
-          v.companyName.split(" ")[0],
-          Math.round(((6200 - v.price) / 2600) * 100),
-        ])
-      ),
-    },
-    {
-      metric: "Delivery",
-      ...Object.fromEntries(
-        top5.map((v) => [
-          v.companyName.split(" ")[0],
-          Math.round(((14 - v.shippingDays) / 14) * 100),
-        ])
-      ),
-    },
-    {
-      metric: "Compliance",
-      ...Object.fromEntries(
-        top5.map((v) => [
-          v.companyName.split(" ")[0],
-          v.compliance.length * 25,
-        ])
-      ),
-    },
-    {
-      metric: "Rating",
-      ...Object.fromEntries(
-        top5.map((v) => [
-          v.companyName.split(" ")[0],
-          v.rating * 20,
-        ])
-      ),
-    },
-    {
-      metric: "Match",
-      ...Object.fromEntries(
-        top5.map((v) => [v.companyName.split(" ")[0], v.matchScore])
-      ),
-    },
-  ];
-
-  const colors = ["#1E40AF", "#059669", "#D97706", "#7C3AED", "#DC2626"];
 
   return (
     <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-      <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+      <div className="px-6 py-4 border-b border-gray-200">
         <h3 className="text-sm font-semibold text-gray-900">
-          Vendor Comparison — Top 5
+          Vendor Comparison — Top {top5.length}
         </h3>
-        <div className="flex gap-1 bg-gray-100 rounded-lg p-0.5">
-          <button
-            onClick={() => setChartType("bar")}
-            className={`px-3 py-1 rounded-md text-xs font-medium transition-colors ${
-              chartType === "bar"
-                ? "bg-white text-gray-900 shadow-sm"
-                : "text-gray-500 hover:text-gray-700"
-            }`}
-          >
-            Bar
-          </button>
-          <button
-            onClick={() => setChartType("radar")}
-            className={`px-3 py-1 rounded-md text-xs font-medium transition-colors ${
-              chartType === "radar"
-                ? "bg-white text-gray-900 shadow-sm"
-                : "text-gray-500 hover:text-gray-700"
-            }`}
-          >
-            Radar
-          </button>
-        </div>
       </div>
-      <div className="p-6" style={{ height: 350 }}>
-        <ResponsiveContainer width="100%" height="100%">
-          {chartType === "bar" ? (
-            <BarChart data={barData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#F3F4F6" />
-              <XAxis
-                dataKey="name"
-                tick={{ fontSize: 12, fill: "#6B7280" }}
-                axisLine={{ stroke: "#E5E7EB" }}
-              />
-              <YAxis
-                tick={{ fontSize: 12, fill: "#6B7280" }}
-                axisLine={{ stroke: "#E5E7EB" }}
-              />
-              <Tooltip
-                contentStyle={{
-                  fontSize: 12,
-                  borderRadius: 8,
-                  border: "1px solid #E5E7EB",
-                }}
-              />
-              <Bar dataKey="Price" fill="#1E40AF" radius={[4, 4, 0, 0]} />
-              <Bar dataKey="Match Score" fill="#059669" radius={[4, 4, 0, 0]} />
-            </BarChart>
-          ) : (
-            <RadarChart data={radarData}>
-              <PolarGrid stroke="#E5E7EB" />
-              <PolarAngleAxis
-                dataKey="metric"
-                tick={{ fontSize: 12, fill: "#6B7280" }}
-              />
-              <PolarRadiusAxis
-                angle={30}
-                domain={[0, 100]}
-                tick={{ fontSize: 10, fill: "#9CA3AF" }}
-              />
-              {top5.map((v, i) => (
-                <Radar
-                  key={v.id}
-                  name={v.companyName.split(" ")[0]}
-                  dataKey={v.companyName.split(" ")[0]}
-                  stroke={colors[i]}
-                  fill={colors[i]}
-                  fillOpacity={0.1}
-                />
-              ))}
-              <Legend
-                wrapperStyle={{ fontSize: 12 }}
-              />
-            </RadarChart>
-          )}
-        </ResponsiveContainer>
+      <div className="p-6 space-y-4">
+        {top5.map((v, i) => (
+          <div
+            key={i}
+            className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg"
+          >
+            <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center text-xs font-semibold shrink-0">
+              {(v.matchName || "?").charAt(0)}
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-gray-900 truncate">
+                {v.matchName || "Unknown"}
+              </p>
+              <p className="text-xs text-gray-500 truncate">
+                {v.companyProductName || "—"}
+              </p>
+            </div>
+            {v.ratings && (
+              <div className="flex items-center gap-1 text-sm shrink-0">
+                <Star className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
+                {v.ratings}
+              </div>
+            )}
+            {v.complianceDetails && (
+              <div className="flex items-center gap-1 shrink-0">
+                <Shield className="w-3.5 h-3.5 text-emerald-500" />
+                <span className="text-xs text-gray-600 max-w-[150px] truncate">
+                  {v.complianceDetails}
+                </span>
+              </div>
+            )}
+          </div>
+        ))}
       </div>
     </div>
   );
