@@ -19,7 +19,8 @@ export default function RequestPage() {
   const router = useRouter();
   const [material, setMaterial] = useState("");
   const [sector, setSector] = useState("");
-  const [budget, setBudget] = useState("");
+  const [budgetMin, setBudgetMin] = useState("");
+  const [budgetMax, setBudgetMax] = useState("");
   const [countries, setCountries] = useState("");
   const [aiPrompt, setAiPrompt] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -31,7 +32,7 @@ export default function RequestPage() {
     router.push("/dashboard");
   };
 
-  const filledFields = [material, sector, budget, countries].filter(Boolean).length;
+  const filledFields = [material, sector, budgetMin || budgetMax, countries].filter(Boolean).length;
 
   return (
     <>
@@ -153,16 +154,28 @@ export default function RequestPage() {
                 <div>
                   <label className="flex items-center gap-2 text-sm font-medium mb-2.5">
                     <DollarSign className="w-4 h-4 text-gray-400" />
-                    Budget (USD)
+                    Budget range (USD)
                   </label>
-                  <input
-                    type="text"
-                    value={budget}
-                    onChange={(e) => setBudget(e.target.value)}
-                    placeholder="e.g., $5,000 - $10,000"
-                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent focus:bg-white transition-all text-sm"
-                    required
-                  />
+                  <div className="grid grid-cols-2 gap-3">
+                    <input
+                      type="number"
+                      value={budgetMin}
+                      onChange={(e) => setBudgetMin(e.target.value)}
+                      placeholder="Min (e.g., 5000)"
+                      min="0"
+                      className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent focus:bg-white transition-all text-sm"
+                      required
+                    />
+                    <input
+                      type="number"
+                      value={budgetMax}
+                      onChange={(e) => setBudgetMax(e.target.value)}
+                      placeholder="Max (e.g., 10000)"
+                      min="0"
+                      className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent focus:bg-white transition-all text-sm"
+                      required
+                    />
+                  </div>
                 </div>
 
                 {/* Countries */}
