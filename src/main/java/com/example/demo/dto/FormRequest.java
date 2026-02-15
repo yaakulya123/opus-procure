@@ -10,10 +10,9 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class FormRequest {
-    private String materialName;
     private String sector;
-    private Integer budgetMin;
-    private Integer budgetMax;
-    private String country;
-    private String aiPrompt;
+    private String equipmentType;
+    private String priorityCountries;
+    private String budgetRequirements;
+    private String compliance;
 }
