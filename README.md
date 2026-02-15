@@ -23,6 +23,17 @@ OpusProcure is an end-to-end AI procurement platform that automates the entire v
 
 The entire flow takes **under 2 minutes** instead of days.
 
+
+<img width="2153" height="1414" alt="image" src="https://github.com/user-attachments/assets/c1db642a-f54d-424b-b879-e69ec4186c80" />
+
+<img width="2352" height="1703" alt="image" src="https://github.com/user-attachments/assets/24e70ab2-175e-4762-a67c-e54bf710ab91" />
+
+<img width="2299" height="1663" alt="image" src="https://github.com/user-attachments/assets/ad427de7-0342-4a77-82f3-e0b5f247e30c" />
+
+<img width="1419" height="765" alt="image" src="https://github.com/user-attachments/assets/1a0fb594-76a1-4a91-8663-9be01d459ab3" />
+
+
+
 ---
 
 ## How It Works
