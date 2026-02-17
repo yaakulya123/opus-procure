@@ -245,6 +245,13 @@ Minimalist SaaS aesthetic inspired by **Linear**, **Notion**, and **Attio**:
 
 Built during the **Opus Hackathon 2026**.
 
+
+Team Lead: Rehnuma Taskin 
+Backend: Rehnuma Taskin and Phuc Nguyen
+Frontend: Yaakulya Sabbani 
+
+Feel free to reach out to Rehnuma Taskin ( rt2609@nyu.edu ) 
+
 ---
 
 ## License
